@@ -1,15 +1,44 @@
 import socket
-
-host = "www.google.com"
-ports = [80,443,21,22]
+import time
 
 
-for port in ports:
-    #creating tcp client
+
+def scanning(link, port, time=1):
+    client = None
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #connecting
-    response = client.connect_ex((host, port))
-
+    response = client.connect_ex((link, port))
     if response == 0:
-        print(f"[+]{port} is open")
+        print(f"[+]Port {port} is open from {link}")
+        client.close()
+        return None
+    else:
+        print(f'[+]Port {port} is closed/filtered from {link} ')
+        client.close()
+        return None
+
+link = "www.google.com"
+port = 22
+
+scanning(link,port)
+#ports = list(range(1,1025))
+
+
+    #creating tcp client
     
+    #connecting
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+#time = time.end()
