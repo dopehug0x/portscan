@@ -3,7 +3,7 @@ import time
 
 
 
-def scanning(link, port, time=1):
+def scanning(link, port, time=2):
     client = None
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     response = client.connect_ex((link, port))
@@ -22,10 +22,6 @@ port = 22
 scanning(link,port)
 #ports = list(range(1,1025))
 
-
-    #creating tcp client
-    
-    #connecting
     
     
     
