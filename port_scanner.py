@@ -4,17 +4,23 @@ import time
 
 
 def scanning(link, port, time=2):
-    client = None
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    response = client.connect_ex((link, port))
-    if response == 0:
-        print(f"[+]Port {port} is open from {link}")
-        client.close()
+
+    try:
+
+        client = None
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        response = client.connect_ex((link, port))
+        if response == 0:
+            print(f"[+]Port {port} is open from {link}")
+            return None
+        else:
+            print(f'[+]Port {port} is closed/filtered from {link} ')
+            return None
+    except Exception as e:
+        print(f'Error: {e} is occurred')
         return None
-    else:
-        print(f'[+]Port {port} is closed/filtered from {link} ')
+    finally:
         client.close()
-        return None
 
 link = "www.google.com"
 port = 22
