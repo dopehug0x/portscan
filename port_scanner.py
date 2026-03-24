@@ -1,11 +1,13 @@
 import socket
-import time
+import datetime
 import random
+from uuid import uuid4
 import concurrent.futures
 
 
 
-def scanning(ip, port, timeout=2):
+
+def scanning(ip, port, timeout=2, sid=None, timestamp=None):
     
 
     try:
@@ -13,10 +15,11 @@ def scanning(ip, port, timeout=2):
         client = None
         
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sid = uuid4()
         client.settimeout(timeout)
         response = client.connect_ex((ip, port))
         if response == 0:
-            print(f"[+]Port {port} is open from {host}")
+            print(f"[+]Port {port} is open from {host} | {sid} session.")
         else:
             print(f'[+]Port {port} is closed/filtered from {host} ')
     except KeyboardInterrupt:
@@ -27,9 +30,14 @@ def scanning(ip, port, timeout=2):
         if client:
             client.close()
 
-host = "www.google.com"
 
-#Get IPV4 and DNS treatment.
+
+
+#Set the target
+host = "186.192.83.5"
+port = 80
+
+#Getting IPV4 and DNS treatment.
 ip = None
 try:
     ip = socket.gethostbyname(host)
@@ -39,11 +47,21 @@ except socket.gaierror:
     exit()
     
 
-port = 443
+
+
+#Socket id
+sid = None
+if sid is None:
+    str(uuid4())
+
+#timestamp
+timestamp = None
+if timestamp is None:
+    str(datetime.isoformat())
 
 #Setting workers to assync scanning
-with ThreadPoolExecutor(max-workers=100) as executor:
-    future = executor.submit
+#with ThreadPoolExecutor(max-workers=100) as executor:
+ #   future = executor.submit
 
 scanning(ip,port)
 ports = list((range(1,1025)))
