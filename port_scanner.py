@@ -7,7 +7,7 @@ import concurrent.futures
 
 
 
-def scanning(ip, port, timeout=2, sid=None, timestamp=None):
+def scanning(ip, ports, timeout=2, sid=None, timestamp=None):
     
     if sid is None:
         sid = str(uuid4())
@@ -21,11 +21,11 @@ def scanning(ip, port, timeout=2, sid=None, timestamp=None):
         
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.settimeout(timeout)
-        response = client.connect_ex((ip, port))
+        response = client.connect_ex((ip, ports))
         if response == 0:
-            print(f"{timestamp}: Port {port} is open from {host} | {sid} session.")
+            print(f"'[+]Port {ports} is open from {target} ")
         else:
-            print(f'[+]Port {port} is closed/filtered from {host} ')
+            print(f'[+]Port {ports} is closed/filtered from {target} ')
     except KeyboardInterrupt:
         print(f'[+]Scanner interrupted.')
     except Exception as e:
@@ -38,44 +38,28 @@ def scanning(ip, port, timeout=2, sid=None, timestamp=None):
 
 
 #Set the target
-host = "186.192.83.5"
-port = 80
+target = "google.com"
+ports = list((range(1,1025)))
+random.shuffle(ports)
 
 #Getting IPV4 and DNS treatment.
 ip = None
 try:
-    ip = socket.gethostbyname(host)
+    ip = socket.gethostbyname(target)
 
 except socket.gaierror:
-    print(f'[+]Hostname {host} does not exists, fix it or check your DNS server')
+    print(f'[+]Hostname {target} does not exists, fix it or check your DNS server')
     exit()
         
-
-#timestamp
-#timestamp = None
-#if timestamp is None:
- #   str(datetime.isoformat())
-
 #Setting workers to assync scanning
-#with ThreadPoolExecutor(max-workers=100) as executor:
- #   future = executor.submit
-
-scanning(ip,port)
-ports = list((range(1,1025)))
-random.shuffle(ports)
-    
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-#time = time.end()
+with concurrent.futures.ThreadPoolExecutor(max_workers=200) as executor:
+   f = {executor.submit(scanning,ip,port): port for port in ports}
+   for future in concurrent.futures.as_completed(f):
+       port = f[future]
+       try:
+           data = future.result()
+       except Exception as exc:
+           print(f'{port} generated an exception: {exc}')
+       except KeyboardInterrupt:
+           executor.shutdown(wait=False, cancel_futures=True)
+           print(f'[+]Scanner interrupted.')
